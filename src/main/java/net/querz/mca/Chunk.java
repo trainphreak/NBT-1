@@ -69,12 +69,17 @@ public class Chunk implements Iterable<Section> {
 			raw = true;
 			return;
 		}
-
-		CompoundTag level;
-		if ((level = data.getCompoundTag("Level")) == null) {
-			throw new IllegalArgumentException("data does not contain \"Level\" tag");
-		}
 		dataVersion = data.getInt("DataVersion");
+		CompoundTag level;
+		// The Level tag was removed in snapshot 21w43a (2844)
+		if (dataVersion < 2844) {
+			level = data.getCompoundTag("Level");
+			if ((level = data.getCompoundTag("Level")) == null) {
+ 				throw new IllegalArgumentException("data does not contain \"Level\" tag");
+ 			}
+		} else {
+			level = data;
+		}
 		inhabitedTime = level.getLong("InhabitedTime");
 		lastUpdate = level.getLong("LastUpdate");
 		if ((loadFlags & BIOMES) != 0) {
@@ -661,7 +666,13 @@ public class Chunk implements Iterable<Section> {
 		}
 
 		data.putInt("DataVersion", dataVersion);
-		CompoundTag level = data.getCompoundTag("Level");
+		CompoundTag level;
+		// The Level tag was removed in snapshot 21w43a (2844)
+		if (dataVersion < 2844) {
+			level = data.getCompoundTag("Level");
+		} else {
+			level = data;
+		}
 		level.putInt("xPos", xPos);
 		level.putInt("zPos", zPos);
 		level.putLong("LastUpdate", lastUpdate);
