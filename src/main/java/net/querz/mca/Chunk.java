@@ -69,6 +69,7 @@ public class Chunk implements Iterable<Section> {
 			raw = true;
 			return;
 		}
+		dataVersion = data.getInt("DataVersion");
 		CompoundTag level;
 		// The Level tag was removed in snapshot 21w43a (2844)
 		if (dataVersion < 2844) {
@@ -79,7 +80,6 @@ public class Chunk implements Iterable<Section> {
 		} else {
 			level = data;
 		}
-		dataVersion = data.getInt("DataVersion");
 		inhabitedTime = level.getLong("InhabitedTime");
 		lastUpdate = level.getLong("LastUpdate");
 		if ((loadFlags & BIOMES) != 0) {
